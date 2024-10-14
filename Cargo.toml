@@ -1,0 +1,10 @@
+[package]
+name = "fuels-amm-rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+async-trait = "0.1.83"
+fuels = "0.66.8"
+serde = "1.0.210"
+thiserror = "1.0.64"
