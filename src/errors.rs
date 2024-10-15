@@ -1,9 +1,12 @@
+use fuels::types::errors::Error;
 use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum AMMError {
     #[error("Contract error")]
     ContractError,
+    #[error("Simulation Error")]
+    SimulationError(#[from] Error),
 }
 
 #[derive(Error, Debug)]

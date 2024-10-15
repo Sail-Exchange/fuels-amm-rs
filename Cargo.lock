@@ -1207,6 +1207,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "fuels",
+ "mira-v1",
  "num-bigfloat",
  "primitive-types 0.13.1",
  "serde",
@@ -1915,6 +1916,19 @@ dependencies = [
  "libc",
  "wasi",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "mira-v1"
+version = "0.1.6"
+source = "git+https://github.com/mira-amm/mira-v1-rs#f9c79bbfd25d5d46ccd76d586f21a64d2e058ffa"
+dependencies = [
+ "anyhow",
+ "fuels",
+ "primitive-types 0.13.1",
+ "rand",
+ "sha2",
+ "tokio",
 ]
 
 [[package]]
