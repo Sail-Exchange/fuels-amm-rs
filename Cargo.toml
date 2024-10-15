@@ -6,5 +6,8 @@ edition = "2021"
 [dependencies]
 async-trait = "0.1.83"
 fuels = "0.66.8"
+num-bigfloat = "1.7.1"
+primitive-types = "0.13.1"
 serde = "1.0.210"
 thiserror = "1.0.64"
+mira-v1 = { git = "https://github.com/mira-amm/mira-v1-rs" }

@@ -1,13 +1,25 @@
 use async_trait::async_trait;
 use fuels::{accounts::wallet::Wallet, types::ContractId};
+use serde::{Deserialize, Serialize};
 
-use crate::errors::AMMError;
+use crate::{
+    amm::{factory::AutomatedMarketMakerFactory, AMM},
+    errors::AMMError,
+};
 
-use super::AMM;
+#[derive(Default, Debug, Clone, Serialize, Deserialize)]
+pub struct MiraFactory {
+    pub contract_id: ContractId,
+    pub creation_block: u64,
+    pub fee: u32,
+}
+
 #[async_trait]
-pub trait AutomatedMarketMakerFactory {
+impl AutomatedMarketMakerFactory for MiraFactory {
     /// Returns the address of the factory.
-    fn address(&self) -> ContractId;
+    fn address(&self) -> ContractId {
+        self.contract_id
+    }
 
     /// Gets all Pools from the factory created logs up to the `to_block` block number.
     ///
@@ -17,7 +29,9 @@ pub trait AutomatedMarketMakerFactory {
         to_block: Option<u64>,
         wallet: Wallet,
         step: u64,
-    ) -> Result<Vec<AMM>, AMMError>;
+    ) -> Result<Vec<AMM>, AMMError> {
+        todo!()
+    }
 
     /// Populates all AMMs data via batched static calls.
     async fn populate_amm_data(
@@ -25,5 +39,7 @@ pub trait AutomatedMarketMakerFactory {
         amms: &mut [AMM],
         block_number: Option<u64>,
         wallet: Wallet,
-    ) -> Result<(), AMMError>;
+    ) -> Result<(), AMMError> {
+        todo!()
+    }
 }
