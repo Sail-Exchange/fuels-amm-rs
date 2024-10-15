@@ -12,10 +12,12 @@ use crate::errors::{AMMError, ArithmeticError, SwapSimulationError};
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct Oxiswap {
     pub address: ContractId,
-    pub token_a: AssetId,
-    pub token_b: AssetId,
-    pub reserve_a: u64,
-    pub reserve_b: u64,
+    pub token_0: AssetId,
+    pub token_0_decimals: u8,
+    pub token_1: AssetId,
+    pub token_1_decimals: u8,
+    pub reserve_0: u64,
+    pub reserve_1: u64,
     pub fee: u64,
 }
 
@@ -27,14 +29,14 @@ impl AutomatedMarketMaker for Oxiswap {
 
     /// Synchronizes the AMM's state with the blockchain.
     async fn sync(&mut self, wallet: Wallet) -> Result<(), AMMError> {
-        let (reserve_a, reserve_b) = self.get_reserves(wallet).await?;
-        self.reserve_a = reserve_a;
-        self.reserve_b = reserve_b;
+        let (reserve_0, reserve_1) = self.get_reserves(wallet).await?;
+        self.reserve_0 = reserve_0;
+        self.reserve_1 = reserve_1;
         Ok(())
     }
 
     fn tokens(&self) -> Vec<AssetId> {
-        vec![self.token_a, self.token_b]
+        vec![self.token_0, self.token_1]
     }
 
     /// Calculates the price of the base token in terms of the other token.
@@ -43,10 +45,10 @@ impl AutomatedMarketMaker for Oxiswap {
         base_token: AssetId,
         _quote_token: AssetId,
     ) -> Result<f64, ArithmeticError> {
-        let (reserve_in, reserve_out) = if base_token == self.token_a {
-            (self.reserve_a, self.reserve_b)
+        let (reserve_in, reserve_out) = if base_token == self.token_0 {
+            (self.reserve_0, self.reserve_1)
         } else {
-            (self.reserve_b, self.reserve_a)
+            (self.reserve_1, self.reserve_0)
         };
 
         let some_price = reserve_out.checked_div(reserve_in);
@@ -70,17 +72,17 @@ impl AutomatedMarketMaker for Oxiswap {
         _quote_token: AssetId,
         amount_in: U256,
     ) -> Result<U256, SwapSimulationError> {
-        if self.token_a == base_token {
+        if self.token_0 == base_token {
             Ok(self.get_amount_out(
                 amount_in,
-                U256::from(self.reserve_a),
-                U256::from(self.reserve_b),
+                U256::from(self.reserve_0),
+                U256::from(self.reserve_1),
             ))
         } else {
             Ok(self.get_amount_out(
                 amount_in,
-                U256::from(self.reserve_b),
-                U256::from(self.reserve_a),
+                U256::from(self.reserve_1),
+                U256::from(self.reserve_0),
             ))
         }
     }
@@ -92,56 +94,61 @@ impl AutomatedMarketMaker for Oxiswap {
         _quote_token: AssetId,
         amount_in: U256,
     ) -> Result<U256, SwapSimulationError> {
-        if self.token_a == base_token {
+        if self.token_0 == base_token {
             let amount_out = self.get_amount_out(
                 amount_in,
-                U256::from(self.reserve_a),
-                U256::from(self.reserve_b),
+                U256::from(self.reserve_0),
+                U256::from(self.reserve_1),
             );
 
-            self.reserve_a += amount_in.as_u64();
-            self.reserve_b -= amount_out.as_u64();
+            self.reserve_0 += amount_in.as_u64();
+            self.reserve_1 -= amount_out.as_u64();
 
             Ok(amount_out)
         } else {
             let amount_out = self.get_amount_out(
                 amount_in,
-                U256::from(self.reserve_b),
-                U256::from(self.reserve_a),
+                U256::from(self.reserve_1),
+                U256::from(self.reserve_0),
             );
 
-            self.reserve_a -= amount_out.as_u64();
-            self.reserve_b += amount_in.as_u64();
+            self.reserve_0 -= amount_out.as_u64();
+            self.reserve_1 += amount_in.as_u64();
 
             Ok(amount_out)
         }
     }
 
     fn get_token_out(&self, token_in: AssetId) -> AssetId {
-        if self.token_a == token_in {
-            self.token_b
+        if self.token_0 == token_in {
+            self.token_1
         } else {
-            self.token_a
+            self.token_0
         }
     }
 }
 
 impl Oxiswap {
     /// Creates a new Oxiswap instance.
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         address: ContractId,
-        token_a: AssetId,
-        token_b: AssetId,
-        reserve_a: u64,
-        reserve_b: u64,
+        token_0: AssetId,
+        token_0_decimals: u8,
+        token_1: AssetId,
+        token_1_decimals: u8,
+        reserve_0: u64,
+        reserve_1: u64,
         fee: u64,
     ) -> Self {
         Self {
             address,
-            token_a,
-            token_b,
-            reserve_a,
-            reserve_b,
+            token_0,
+            token_0_decimals,
+            token_1,
+            token_1_decimals,
+            reserve_0,
+            reserve_1,
             fee,
         }
     }
