@@ -11,6 +11,8 @@ use mira_v1::interface::{PoolId, PoolMetadata};
 use num_bigfloat::BigFloat;
 use serde::{Deserialize, Serialize};
 
+// Note: Mira V1 has the factory and the Pools in one contract
+
 /// Represents a Mira pool.
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct MiraV1 {

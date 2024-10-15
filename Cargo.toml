@@ -11,3 +11,4 @@ primitive-types = "0.13.1"
 serde = "1.0.210"
 thiserror = "1.0.64"
 mira-v1 = { git = "https://github.com/mira-amm/mira-v1-rs" }
+fuel-storage = "0.58.2"

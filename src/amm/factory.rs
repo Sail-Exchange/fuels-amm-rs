@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use fuels::{accounts::wallet::Wallet, types::ContractId};
+use serde::{Deserialize, Serialize};
 
 use crate::errors::AMMError;
 
@@ -27,3 +28,6 @@ pub trait AutomatedMarketMakerFactory {
         wallet: Wallet,
     ) -> Result<(), AMMError>;
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Factory {}
