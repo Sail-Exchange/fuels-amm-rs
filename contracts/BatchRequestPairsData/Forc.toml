@@ -1,0 +1,8 @@
+[project]
+authors = ["Walter Phillips"]
+entry = "main.sw"
+license = "Apache-2.0"
+name = "BatchRequestPairsData"
+
+[dependencies]
+interfaces = { git = "https://github.com/mira-amm/mira-v1-core" }
